@@ -1,7 +1,7 @@
 import os
 import requests
 
-REGISTRY_URL = os.getenv("SERVICE_REGISTRY_URL", "http://localhost:4471")
+REGISTRY_URL = os.getenv("SERVICE_REGISTRY_ADDRESS", "http://localhost:4471")
 SERVICE_NAME = os.getenv("SERVICE_NAME", "market-news-service")
 SERVICE_PORT = os.getenv("SERVICE_PORT", "8000")
 JWT_SECRET = os.getenv("JWT_SECRET", "CS4471")

@@ -1,0 +1,65 @@
+Prerequisites:
+
+    Make sure you have the following installed:
+
+    Python 3.9 or higher
+    Virtualenv
+    Git
+    Docker (optional, for containerized deployment)
+
+    Installation and Setup
+    1. Clone the Repository
+        - git clone https://github.com/jalladleen/market-news-sentiment-ms.git
+        - cd market-news-sentiment-ms
+
+    2. Set Up a Virtual Environment
+    bash:
+        - python3 -m venv venv
+        - source venv/bin/activate #Linux      
+        - venv\Scripts\activate  #windows
+
+    3. Install Dependencies
+        - pip install -r requirements.txt
+
+    4. Run the Microservice:
+        uvicorn src.app.main:app --host 0.0.0.0 --port 8000 --reload
+
+Service Registry Integration:
+
+    1.  Authenticate with the Service Registry --> get <JWT_TOKEN>:
+        curl -X POST https://service-registry-cs4471.1p2lshm2wxjn.us-east.codeengine.appdomain.cloud/login \
+        -H "Content-Type: application/json" \
+        -d '{
+            "username": "admin",
+            "password": "admin"
+            }'
+
+    2. Register Microservice --> Replace <JWT_TOKEN> with the token from the authentication step.: 
+        curl -X POST https://service-registry-cs4471.1p2lshm2wxjn.us-east.codeengine.appdomain.cloud/register \
+        -H "Authorization: Bearer <JWT_TOKEN>" \
+        -H "Content-Type: application/json" \
+        -d '{
+            "serviceName": "market-news-service",
+            "port": "8000",
+            "description": "Market News Sentiment Microservice",
+            "version": "1.0.0",
+            "instanceId": "1",
+            "url": "http://127.0.0.1:8000"
+            }'
+
+    3. Verify Registration:
+        curl -X GET https://service-registry-cs4471.1p2lshm2wxjn.us-east.codeengine.appdomain.cloud/services \
+            -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
+
+    4. Discover Service:
+        curl -X GET https://service-registry-cs4471.1p2lshm2wxjn.us-east.codeengine.appdomain.cloud/discover/market-news-service \
+        -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
+
+    5. Deregister Microservice:
+        curl -X POST https://service-registry-cs4471.1p2lshm2wxjn.us-east.codeengine.appdomain.cloud/deregister \
+        -H "Authorization: Bearer <JWT_TOKEN>" \
+        -H "Content-Type: application/json" \
+        -d '{
+            "serviceName": "market-news-service",
+            "instanceId": "1"
+            }'
